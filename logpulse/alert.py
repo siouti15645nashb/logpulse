@@ -21,6 +21,14 @@ class AlertRule:
     _regex: re.Pattern = field(init=False, repr=False)
 
     def __post_init__(self) -> None:
+        if self.threshold < 1:
+            raise ValueError(
+                f"AlertRule '{self.name}': threshold must be >= 1, got {self.threshold}"
+            )
+        if self.window_seconds <= 0:
+            raise ValueError(
+                f"AlertRule '{self.name}': window_seconds must be > 0, got {self.window_seconds}"
+            )
         self._regex = re.compile(self.pattern)
 
     def matches(self, line: str) -> bool:
