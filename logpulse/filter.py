@@ -25,15 +25,21 @@ class LineFilter:
                               If empty or None, all lines are included by default.
             exclude_patterns: Lines matching any of these patterns are excluded.
             case_sensitive: Whether pattern matching is case-sensitive.
+
+        Raises:
+            re.error: If any of the provided patterns are not valid regular expressions.
         """
         flags = 0 if case_sensitive else re.IGNORECASE
 
-        self._include = [
-            re.compile(p, flags) for p in (include_patterns or [])
-        ]
-        self._exclude = [
-            re.compile(p, flags) for p in (exclude_patterns or [])
-        ]
+        try:
+            self._include = [
+                re.compile(p, flags) for p in (include_patterns or [])
+            ]
+            self._exclude = [
+                re.compile(p, flags) for p in (exclude_patterns or [])
+            ]
+        except re.error as exc:
+            raise re.error(f"Invalid regex pattern in LineFilter: {exc}") from exc
 
     def matches(self, line: str) -> bool:
         """Return True if the line passes the filter."""
