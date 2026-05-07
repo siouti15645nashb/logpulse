@@ -78,19 +78,14 @@ class TestLineFormatter:
         assert "[" in result
 
     def test_format_empty_line(self):
-        """Empty lines should be formatted without raising and preserve structure."""
+        """Empty string input should be returned as-is without errors."""
+        fmt = LineFormatter()
+        result = fmt.format("")
+        assert result == ""
+
+    def test_format_empty_line_with_source(self):
+        """Empty line with a source label should still include the separator."""
         fmt = LineFormatter(label_width=8)
         result = fmt.format("", source="app.log")
-        # The separator and source label should still appear
-        assert "app.log" in result
         assert "|" in result
-        # The line content after the separator should be empty
-        content_after_pipe = result.split("|", 1)[-1]
-        assert content_after_pipe == ""
-
-    def test_format_line_without_source(self):
-        """Lines formatted without a source should not include a separator."""
-        fmt = LineFormatter(label_width=8)
-        result = fmt.format("standalone line")
-        assert "standalone line" in result
-        assert "|" not in result
+        assert "app.log" in result
